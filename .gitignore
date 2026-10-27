@@ -1,0 +1,37 @@
+# macOS / Windows junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# logs, crash reports, dumps
+*.log
+*.ips
+*.panic
+*.crash
+*.dmp
+
+# build artifacts
+build/
+*.o
+*.dSYM/
+*.dylib.tmp
+__pycache__/
+*.pyc
+
+# build artifacts in repo
+tools/brightness/BrightnessMenu.app/
+EFI-sanitized*
+*.tar.gz
+
+# personal backups
+*.bak
+*.bak-*
+config.plist.bak-*
+*.backup
+
+# secrets (never commit)
+*.key
+*.pem
+id_rsa*
+.env
+secrets.*

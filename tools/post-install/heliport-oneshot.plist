@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>local.heliport-oneshot</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>/usr/bin/open -a HeliPort; ok=0; i=0; while [ $i -lt 30 ]; do if /sbin/ifconfig en0 2>/dev/null | /usr/bin/grep -q "inet "; then ok=1; break; fi; i=$((i+1)); sleep 1; done; if [ "$ok" = "1" ]; then sleep 4; /usr/bin/pkill -x HeliPort; fi</string>
+    </array>
+    <key>RunAtLoad</key><true/>
+    <key>StandardOutPath</key><string>/tmp/heliport-oneshot.log</string>
+    <key>StandardErrorPath</key><string>/tmp/heliport-oneshot.log</string>
+</dict>
+</plist>

@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.sh text eol=lf
+*.plist text eol=lf
+*.md text eol=lf
+*.c text eol=lf
+*.cpp text eol=lf
+*.m text eol=lf
+*.efi binary
+*.dylib binary
+*.kext binary
