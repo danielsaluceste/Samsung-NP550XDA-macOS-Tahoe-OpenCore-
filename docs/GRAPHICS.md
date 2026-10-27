@@ -7,9 +7,15 @@ da que o plugin Intel antigo exporta, e o sandbox dele só lê `/System`.
 ## Resumo do que funciona
 
 ```
-WhateverXe 0.5.0 (RELEASE) + WhateverXe Graphics 0.2.0
-MTLCompilerService -> adapter.dylib (bridge) -> xe.bundle (compilador antigo + IGC)
+WhateverXe 0.6.1 (RELEASE) + WhateverXe Graphics 0.3.2
+MTLCompilerService -> adapter.dylib (oficial 0.3.2) -> GPUCompiler 32023 + libigc-tgl.dylib
 ```
+
+O `adapter.dylib` oficial do 0.3.2 é **release** (32 KB, sem sleeps de debug nem dump) e usa
+`libigc-tgl.dylib` + `runtime.igc64.bc`. Esses dois arquivos são **byte a byte idênticos** aos do
+0.2.0, então os symlinks para `/System/Library/Caches/XeCompiler` continuam válidos. O adapter
+custom antigo (`adapter-wex.dylib`) e o `xe.bundle` ficam como **fallback** caso uma versão futura
+volte a exigir o plugin Intel antigo.
 
 - `Metal Support: Metal 2`
 - `Resolution: 1920 x 1080`, `Online: Yes`, `Connection Type: Internal`
@@ -43,7 +49,7 @@ conta como `/System` para o sandbox) e criar symlinks no bundle do WEX:
 /Library/GPUBundles/XeCompilerAdapter.bundle/Contents/MacOS/
   libigc-tgl.dylib    -> /System/Library/Caches/XeCompiler/libigc-tgl.dylib
   runtime.igc64.bc    -> /System/Library/Caches/XeCompiler/runtime.igc64.bc
-  adapter.dylib       (bridge; o original fica em adapter-wex.dylib)
+  adapter.dylib       (oficial 0.3.2; o custom antigo fica em adapter-wex.dylib)
 ```
 
 ## Estrutura do `xe.bundle`
@@ -128,7 +134,8 @@ Ajuste os caminhos no script.
 
 - **Build DEBUG do WhateverXe dá panic.** Use RELEASE.
 - **Não** coloque o stack em `/Library/GPUBundles` (sandbox).
-- **Não** use `XE_ADAPTER_DUMP=1` em produção: 250 ms por shader + dump de 22 MB no log.
+- **Não** use `XE_ADAPTER_DUMP=1` no adapter custom antigo em produção: 250 ms por shader + dump de
+  22 MB no log. O adapter oficial do 0.3.2 não tem esse comportamento.
 - **Não** injete `IOSkywalkFamily` (Wi-Fi) esperando resolver gráficos; é outro subsistema e trava
   o boot.
 - Se o WindowServer reiniciar em loop, verifique os symlinks e o `adapter.dylib`.

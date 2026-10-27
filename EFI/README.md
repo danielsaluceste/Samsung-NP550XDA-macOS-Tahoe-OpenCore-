@@ -1,7 +1,7 @@
 # EFI
 
-Esta pasta contém a **EFI sanitizada** do OpenCore usada no notebook (51,3 MB, 35 kexts,
-`Kernel > Add` com 40 entradas habilitadas). Por segurança, ela **não** inclui SMBIOS
+Esta pasta contém a **EFI sanitizada** do OpenCore usada no notebook (**31 kexts**,
+`Kernel > Add` com **36 entradas habilitadas**). Por segurança, ela **não** inclui SMBIOS
 (serial/MLB/UUID/ROM) nem credenciais de Wi-Fi.
 
 > **Gere seu próprio SMBIOS** com GenSMBIOS antes de usar iServices. O `config.plist` está com
@@ -72,8 +72,9 @@ EFI/
   - Lilu primeiro
   - AppleALC antes de SimpleHDA
   - `IntelBluetoothFirmware` → `IntelBTPatcher` → `BlueToolFixup` (MaxKernel vazio)
-  - `itlwm` habilitado; `AirportItlwm*`, `IOSkywalkFamily`, `IO80211FamilyLegacy` desabilitados
-  - `BrightnessKeys` **desabilitado** (não é mais usado)
+  - `itlwm` é o único Wi-Fi; `AirportItlwm*`, `IOSkywalkFamily` e `IO80211FamilyLegacy` foram
+    **removidos**
+  - `VoodooI2C` **2.8** (a 2.9.1 não carrega no Tahoe); `BrightnessKeys` foi **removido**
 - `DeviceProperties > PciRoot(0x0)/Pci(0x1F,0x3)`: `layout-id` = `Data` `JgAAAA==` (38)
 - `NVRAM > Add > 4D1FDA02-...`: `revcpu=1`, `revcpuname=Intel Core i5-1135G7`,
   `revpatch=sbvmm,cpuname`

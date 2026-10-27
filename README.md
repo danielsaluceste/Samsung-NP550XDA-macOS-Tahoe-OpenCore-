@@ -18,7 +18,7 @@ usadas para chegar nesse estado.
 | Item | Estado | Observação |
 |---|---|---|
 | Boot | ✅ | OpenCore no ESP interno (`disk0s1`) |
-| Gráficos / Metal | ✅ | Iris Xe `8086:9A49` com WhateverXe 0.5.0 + stack de compilador |
+| Gráficos / Metal | ✅ | Iris Xe `8086:9A49` com WhateverXe 0.6.1 + Graphics 0.3.2 |
 | Painel eDP | ✅ | 1920×1080, interno, 30-bit (ARGB2101010) |
 | Áudio | ✅ | ALC256 via SimpleHDA + AppleALC layout **38** |
 | Microfone | ✅ | interno |
@@ -50,6 +50,29 @@ usadas para chegar nesse estado.
 | BIOS | UEFI, sem Secure Boot |
 
 macOS instalado: **Tahoe 26.7.1 (25G241)**.
+
+### Versões dos kexts (estado validado em 2026-10-27)
+
+| Kext | Versão | Observação |
+|---|---|---|
+| WhateverXe | **0.6.1** | release; `-wexdbg` não usado |
+| WhateverXe Graphics | **0.3.2** | `AppleIntelTGLCompat` 0.6.1 + MTL/GL/VA |
+| Lilu | 1.7.2 | |
+| VirtualSMC + SMCProcessor/SMCSuperIO/SMCLightSensor/SMCBatteryManager | **1.3.8** | todos na mesma versão |
+| AppleALC | **1.9.8** | layout 38 |
+| SimpleHDA | 1.0.0 | substitui o AppleHDA removido no 26 |
+| BlueToolFixup | 2.7.2 | `MaxKernel` **vazio** |
+| itlwm | 2.3.0 | + HeliPort one-shot |
+| VoodooI2C / VoodooI2CHID | **2.8** / 1.0 | **fixado**: a 2.9.1 não carrega no Tahoe (ver TROUBLESHOOTING) |
+| VoodooPS2Controller | 2.3.7 | teclado interno |
+| CPUFriend (+DataProvider) | 1.3.0 / 1.0.1 | |
+| RestrictEvents | 1.1.6 | nome da CPU |
+
+Kexts **removidos** por não terem hardware/uso: `CtlnaAHCIPort` (sem SATA), `EmeraldSDHC` (sem
+leitor SD), `HoRNDIS` (sem tethering USB), `EFICheckDisabler`, `WhateverGreen`, `NootedBlue`,
+`DisplayMergeNub`, `XHCI-unsupported`, `USBMap`, `BrightnessKeys`, `AirportItlwm*`,
+`AirportBrcmFixup`, `BrcmFirmwareData`, `BrcmPatchRAM3`, `IOSkywalkFamily`,
+`IO80211FamilyLegacy` e `IntelBluetoothInjector`.
 
 ---
 
@@ -211,8 +234,8 @@ Wi-Fi **nativo** (menu do macOS) não é possível neste build: o `IOSkywalkFami
 
 Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md)):
 
-- adapter do compilador em **modo release**: sem `usleep(250ms)` por shader e sem dump de 22 MB
-  no log (`XE_ADAPTER_DUMP=1` reativa só para depurar);
+- adapter do compilador **oficial do Graphics 0.3.2** (release, sem `usleep(250ms)` por shader e sem
+  dump no log); o adapter custom antigo continua em `adapter-wex.dylib` como fallback;
 - `-wexdbg` removido;
 - HeliPort sem ficar aberto (vazamento do WindowServer);
 - `disksleep 0` e `hibernatemode 0` (SSD sem DRAM);
@@ -229,6 +252,8 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 - **VP9/AV1 por hardware**: o Tiger Lake não decodifica; YouTube no Chrome usa CPU. Use Safari ou
   force H.264.
 - **Sleep do sistema**: trava na entrada (`Failure 0x1F`, EFI/Bootrom). Testados e descartados: `hibernatemode 0`, `hibernatemode 25`, remoção do `SSDT-S3`, Bluetooth desligado, patches USB (`SSDT-RHUB`, `SSDT-USBW`, `USBWakeFixup`) e o par `SSDT-GPRW`/`GPRW→XPRW`. Todos travam na entrada. Restam WEX/GPU (sleep/wake **não verificado** no TGL; `AppleIntelFramebuffer` slow no log) e `itlwm`. Use `sleep 0` (padrão do repo) e desligue/reinicie; o **display sleep** funciona.
+- **VoodooI2C 2.9.1**: não carrega no Tahoe (`VoodooGPIO`/`VoodooI2C` novos falham na injeção e o
+  trackpad some). O repo fixa a **2.8**, que funciona.
 - **iServices**: exigem SMBIOS/seriais válidos e únicos; não distribua os seus.
 - **Painel 30-bit**: o EDID declara 10-bit; não há opção segura para forçar 24-bit.
 
@@ -239,6 +264,7 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 | Sintoma | Verifique |
 |---|---|
 | Tela preta / WindowServer reiniciando | stack `xe.bundle`, symlinks `libigc-tgl.dylib`/`runtime.igc64.bc`, adapter |
+| Trackpad sumiu após atualizar kext | `VoodooI2C` 2.9.1 não carrega no Tahoe; volte para **2.8** |
 | Boot para em `SMCRTC: Stop` | você injetou `IOSkywalkFamily`; remova |
 | Sem áudio | ordem Lilu→AppleALC→SimpleHDA e `layout-id` 38 |
 | Sem brilho | `bklt` via BrightnessMenu; `DisplayServicesCanChangeBrightness` é 0 |

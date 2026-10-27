@@ -1,6 +1,6 @@
 # macOS Tahoe 26.7.1 no Samsung NP550XDA (i5-1135G7 / Iris Xe 9A49) — aceleração funcionando
 
-Data: 2026-10-24
+Data: 2026-10-24 (atualizado em 2026-10-27)
 Hardware: Samsung NP550XDA, Intel Core i5-1135G7 (Tiger Lake), iGPU 8086:9A49 (Iris Xe 80 EU),
 painel BOE NT156FHM-N61 1920x1080 eDP.
 
@@ -9,7 +9,27 @@ painel BOE NT156FHM-N61 1920x1080 eDP.
 - macOS Tahoe 26.7.1 (build 25G241), Metal 2, 1536 MB VRAM, painel interno 1920x1080
   (`Connection Type: Internal`, `Online: Yes`, `Framebuffer Depth: 30-Bit Color`).
 - WindowServer estável; Dock/Finder com composição acelerada.
-- WhateverXe 0.5.0 (kernel) + WhateverXe Graphics 0.2.0 (pacote) + AMFIPass 1.4.1 **Mod**.
+- WhateverXe 0.6.1 (kernel) + WhateverXe Graphics 0.3.2 (pacote) + AMFIPass 1.4.1 **Mod**.
+
+### Atualização 2026-10-27
+
+- **WhateverXe 0.6.1 + Graphics 0.3.2**: instalados; `AppleIntelTGLCompat` 0.6.1 e AuxKC
+  reconstruído pelo pós-instalação do pacote. O `adapter.dylib` oficial do 0.3.2 é release (32 KB,
+  sem sleeps/dumps) e passou a ser usado; o custom (`adapter-wex.dylib`) e o `xe.bundle` ficam como
+  fallback. `libigc-tgl.dylib`/`runtime.igc64.bc` são idênticos aos anteriores (sha256 iguais), então
+  os symlinks para `/System/Library/Caches/XeCompiler` continuam válidos.
+- **VirtualSMC 1.3.8** (kernel + 4 plugins), **AppleALC 1.9.8**.
+- **VoodooI2C 2.9.1 testado e revertido**: `VoodooGPIO`/`VoodooI2C` novos não carregam no Tahoe
+  (trackpad some). Ficou a **2.8**, que carrega (`VoodooI2C 2.8`, `VoodooGPIO 1.1`,
+  `VoodooInput 1.1.6`, `VoodooI2CHID 1`).
+- Kexts sem uso **removidos da EFI e do `config.plist`**: `CtlnaAHCIPort`, `EmeraldSDHC`,
+  `HoRNDIS`, `EFICheckDisabler`, `WhateverGreen`, `NootedBlue`, `DisplayMergeNub`,
+  `XHCI-unsupported`, `USBMap`, `BrightnessKeys`, `AirportItlwm*`, `AirportBrcmFixup`,
+  `BrcmFirmwareData`, `BrcmPatchRAM3`, `IOSkywalkFamily`, `IO80211FamilyLegacy`,
+  `IntelBluetoothInjector`. `Kernel > Add`: 61 → 36 entradas (31 kexts).
+- Teste de Metal após a atualização: `newLibraryWithSource` + pipeline + kernel na GPU **OK**
+  (1,6 ms de compilação; `out[100]=300`).
+- Sleep **continua** travando na entrada (`0x1F`); `sleep 0` mantido.
 
 ## Cadeia de diagnóstico (o que era o quê)
 

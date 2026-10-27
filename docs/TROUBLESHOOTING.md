@@ -63,8 +63,32 @@ ls -l /Library/GPUBundles/XeCompilerAdapter.bundle/Contents/MacOS/
 ### “Metal: unsupported” / sem aceleração
 
 - Verifique `-allow3d` e `-disablegfxfirmware`.
-- Verifique `WhateverXe.kext` Enabled e `WhateverGreen.kext` **Disabled**.
+- Verifique `WhateverXe.kext` Enabled (o `WhateverGreen` foi removido do repo).
 - Veja `docs/GRAPHICS.md`.
+
+## Trackpad / I2C
+
+### Trackpad sumiu depois de atualizar o VoodooI2C
+
+A **2.9.1** (nov/2024) não carrega no Tahoe: o `VoodooGPIO`/`VoodooI2C` novos falham na injeção e
+o trackpad não aparece no `hidutil`. Use a **2.8**, que é a versão fixada no repo:
+
+```bash
+# confira o que está carregado
+kmutil showloaded --list-only | grep -i voodoo
+
+# o esperado (2.8):
+# com.alexandred.VoodooI2C (2.8)
+# org.coolstar.VoodooGPIO (1.1)
+# com.alexandred.VoodooI2CHID (1)
+# me.kishorprins.VoodooInput (1.1.6)
+
+# o trackpad deve aparecer como I2C
+hidutil list | grep -i -E 'I2C|Touchpad'
+```
+
+Para voltar: substitua `EFI/OC/Kexts/VoodooI2C.kext` e `VoodooI2CHID.kext` pela 2.8 (backup
+`RECOVERY/EFI-backup-0.5.0.tgz`/`EFI-OLD-0.5.0` do pendrive) e reinicie.
 
 ## Áudio
 

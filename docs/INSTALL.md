@@ -78,6 +78,10 @@ Se você não usa iServices (iMessage/FaceTime/App Store), pode deixar vazio par
 
 ## 6. Pós-instalação (ESP interna)
 
+> **Versões fixadas:** use as versões da tabela em `README.md`. Em especial, **VoodooI2C 2.8**
+> (a 2.9.1 não carrega no Tahoe) e `BlueToolFixup` sem `MaxKernel`. O repo já traz a EFI com essas
+> versões; não atualize “só porque saiu versão nova” sem testar o trackpad e o Metal.
+
 Monte a EFI interna e copie a EFI:
 
 ```bash

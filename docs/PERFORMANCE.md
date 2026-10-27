@@ -3,6 +3,10 @@
 Sintoma original: “às vezes é meio lento para carregar algo”. O diagnóstico foi feito com medições,
 não com achismo. As três causas reais estão abaixo.
 
+> **Atualização 2026-10-27:** com o **Graphics 0.3.2**, o `adapter.dylib` oficial passou a ser
+> usado e já é release (32 KB, sem `usleep`, sem dump). O adapter custom descrito abaixo e o
+> `xe.bundle` continuam só como fallback. As medições abaixo são o histórico do problema.
+
 ## 1. O adapter do compilador estava em modo debug
 
 O `compiler-adapter.cpp` usado para fechar a ABI do Tahoe tinha, por instrumentação:
