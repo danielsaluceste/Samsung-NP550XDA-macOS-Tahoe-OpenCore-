@@ -286,5 +286,4 @@ licenças originais; veja [`THIRD-PARTY.md`](THIRD-PARTY.md).
 - Toda a comunidade hackintosh
 
 Se este repositório te ajudou, deixe uma ⭐.
-#   S a m s u n g - N P 5 5 0 X D A - m a c O S - T a h o e - O p e n C o r e -  
- 
+# Samsung-NP550XDA-macOS-Tahoe-OpenCore-
