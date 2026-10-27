@@ -28,8 +28,9 @@ Failure during sleep: 0x0000001F : EFI/Bootrom Failure after last point of entry
 ```
 
 Causa: a transição S3/S4 não completa. O README do WhateverXe declara **sleep/wake não
-verificado** no Tiger Lake. Testados `hibernatemode 0`, `hibernatemode 25` e a remoção do
-`SSDT-S3` — todos falharam.
+verificado** no Tiger Lake. Testados e descartados: `hibernatemode 0`, `hibernatemode 25`,
+remoção do `SSDT-S3`, Bluetooth desligado, patches USB (`SSDT-RHUB`, `SSDT-USBW`,
+`USBWakeFixup`) e o par `SSDT-GPRW`/`GPRW→XPRW`. Restam WEX/GPU e `itlwm`.
 
 Workaround (padrão do repo):
 

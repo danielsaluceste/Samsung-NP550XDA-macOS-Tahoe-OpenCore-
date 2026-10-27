@@ -228,7 +228,7 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 - **Teclas Fn+F2/F3 de brilho**: o DSDT/EC só notifica o EC; patches ACPI não mudaram nada.
 - **VP9/AV1 por hardware**: o Tiger Lake não decodifica; YouTube no Chrome usa CPU. Use Safari ou
   force H.264.
-- **Sleep do sistema**: trava na entrada (`Failure 0x1F`, EFI/Bootrom). Testados `hibernatemode 0`, `25` e remoção do `SSDT-S3`; todos falharam. O WEX declara sleep/wake não verificado no TGL. Use `sleep 0` (padrão do repo) e desligue/reinicie em vez de dormir; o **display sleep** funciona.
+- **Sleep do sistema**: trava na entrada (`Failure 0x1F`, EFI/Bootrom). Testados e descartados: `hibernatemode 0`, `hibernatemode 25`, remoção do `SSDT-S3`, Bluetooth desligado, patches USB (`SSDT-RHUB`, `SSDT-USBW`, `USBWakeFixup`) e o par `SSDT-GPRW`/`GPRW→XPRW`. Todos travam na entrada. Restam WEX/GPU (sleep/wake **não verificado** no TGL; `AppleIntelFramebuffer` slow no log) e `itlwm`. Use `sleep 0` (padrão do repo) e desligue/reinicie; o **display sleep** funciona.
 - **iServices**: exigem SMBIOS/seriais válidos e únicos; não distribua os seus.
 - **Painel 30-bit**: o EDID declara 10-bit; não há opção segura para forçar 24-bit.
 

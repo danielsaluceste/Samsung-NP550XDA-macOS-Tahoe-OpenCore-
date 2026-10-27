@@ -350,6 +350,9 @@ Testes realizados:
 - `hibernatemode 0` (S3): trava na entrada; sem `Sleep`/`Wake` no log.
 - `hibernatemode 25` (S4): trava na entrada; nenhum `sleepimage` chega a ser gravado.
 - `SSDT-S3.aml` desativado (era um SSDT de XPS13 com `SS3 = One`): trava igual.
+- Bluetooth desligado (IntelBluetoothFirmware/IntelBTPatcher/BlueToolFixup): trava igual.
+- `SSDT-RHUB` + `SSDT-USBW` + `USBWakeFixup` desligados: trava igual.
+- `SSDT-GPRW` + patch `GPRW→XPRW` desligados: trava igual.
 - README do WhateverXe: **sleep/wake não verificado** no Tiger Lake.
 
 Workaround adotado:
