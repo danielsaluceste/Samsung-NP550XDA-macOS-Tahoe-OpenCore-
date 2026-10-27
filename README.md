@@ -27,7 +27,7 @@ usadas para chegar nesse estado.
 | Wi-Fi | ⚠️ | `itlwm` + HeliPort (sem menu nativo/AirDrop) |
 | Bluetooth | ✅ | AX201 com BlueToolFixup 2.7.2 |
 | Ethernet | ✅ | Realtek RTL8111 (nativo) |
-| Sleep/Wake | ⚠️ | funciona, mas valide no seu uso |
+| Sleep/Wake | ⚠️ | **sistema não suspende** (trava na entrada); `sleep 0` aplicado; display sleep OK |
 | AirDrop / Handoff | ❌ | depende de Wi-Fi nativo (AWDL) |
 | iServices | ⚠️ | depende de SMBIOS/seriais válidos; não coberto |
 
@@ -228,7 +228,7 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 - **Teclas Fn+F2/F3 de brilho**: o DSDT/EC só notifica o EC; patches ACPI não mudaram nada.
 - **VP9/AV1 por hardware**: o Tiger Lake não decodifica; YouTube no Chrome usa CPU. Use Safari ou
   force H.264.
-- **Sleep**: teste no seu uso; `HibernationFixup` está incluído.
+- **Sleep do sistema**: trava na entrada (`Failure 0x1F`, EFI/Bootrom). Testados `hibernatemode 0`, `25` e remoção do `SSDT-S3`; todos falharam. O WEX declara sleep/wake não verificado no TGL. Use `sleep 0` (padrão do repo) e desligue/reinicie em vez de dormir; o **display sleep** funciona.
 - **iServices**: exigem SMBIOS/seriais válidos e únicos; não distribua os seus.
 - **Painel 30-bit**: o EDID declara 10-bit; não há opção segura para forçar 24-bit.
 

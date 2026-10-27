@@ -18,6 +18,31 @@ Remova a entrada em `Kernel > Add` e desabilite o kext. O boot volta.
 Use build **RELEASE**. Builds DEBUG do WEX dão panic. Confirme também os boot-args
 (`-allow3d -disablegfxfirmware`).
 
+## Sleep / tela preta ao dormir
+
+Sintoma: ao entrar em suspensão, a tela apaga e o sistema **congela** (LED aceso, sem resposta).
+No próximo boot, `pmset -g log` mostra:
+
+```
+Failure during sleep: 0x0000001F : EFI/Bootrom Failure after last point of entry to sleep
+```
+
+Causa: a transição S3/S4 não completa. O README do WhateverXe declara **sleep/wake não
+verificado** no Tiger Lake. Testados `hibernatemode 0`, `hibernatemode 25` e a remoção do
+`SSDT-S3` — todos falharam.
+
+Workaround (padrão do repo):
+
+```bash
+sudo pmset -a sleep 0
+sudo pmset -a standby 0
+sudo pmset -a autopoweroff 0
+sudo pmset -a hibernatemode 0
+```
+
+O **display sleep** continua funcionando (`displaysleep 2/10`). Use desligar/reiniciar em vez de
+dormir.
+
 ## Gráficos
 
 ### Tela preta / WindowServer reiniciando em loop

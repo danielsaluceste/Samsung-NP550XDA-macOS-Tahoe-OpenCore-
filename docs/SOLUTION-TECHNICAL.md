@@ -336,6 +336,31 @@ Observação: scan por ferramenta CLI via SSH retorna `0xe00002e2` (`kIOReturnNo
 do **TCC de Bluetooth**, não por falha do controlador. Validar pareando pelo
 **Ajustes do Sistema → Bluetooth**.
 
+## Sleep do sistema (2026-10-27)
+
+Sintoma: ao entrar em suspensão, a tela apaga e o sistema **congela** (LED aceso, sem resposta).
+No boot seguinte, `pmset -g log` mostra:
+
+```
+Failure during sleep: 0x0000001F : EFI/Bootrom Failure after last point of entry to sleep
+```
+
+Testes realizados:
+
+- `hibernatemode 0` (S3): trava na entrada; sem `Sleep`/`Wake` no log.
+- `hibernatemode 25` (S4): trava na entrada; nenhum `sleepimage` chega a ser gravado.
+- `SSDT-S3.aml` desativado (era um SSDT de XPS13 com `SS3 = One`): trava igual.
+- README do WhateverXe: **sleep/wake não verificado** no Tiger Lake.
+
+Workaround adotado:
+
+```bash
+sudo pmset -a sleep 0 standby 0 autopoweroff 0 hibernatemode 0
+```
+
+O **display sleep** (`displaysleep 2/10`) funciona e não derruba a rede. Suspeitos restantes:
+WEX/GPU, `itlwm`, Bluetooth e patches USB/ACPI. Use desligar/reiniciar em vez de dormir.
+
 ## Wi-Fi no Tahoe 26.7.1 (25G241)
 
 - `AirportItlwm-Tahoe` 2.4.0 **não carrega**: declara dependência de

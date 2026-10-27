@@ -75,7 +75,8 @@ Subsystem: `144d:c195` (Samsung).
 
 ## Power
 
-- `pmset`: `disksleep 0`, `hibernatemode 0`, `powernap 0`, `womp 0` (tuned for responsiveness;
-  see `PERFORMANCE.md`).
+- `pmset`: `sleep 0`, `standby 0`, `hibernatemode 0`, `disksleep 0`, `powernap 0`, `womp 0`.
+  O **sleep do sistema** trava na entrada (`Failure 0x1F`); `sleep 0` evita o congelamento.
+  O **display sleep** funciona. Veja `PERFORMANCE.md` e `TROUBLESHOOTING.md`.
 - CPU power management: `plugin-type = 1`, `X86PlatformPlugin` loaded, HWP active,
   `CPUFriendDataProvider` for the i5-1135G7 (4.2 GHz single / 3.8 GHz all-core).

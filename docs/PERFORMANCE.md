@@ -77,6 +77,10 @@ ou seja, **platô em ~690 MB**, sem crescimento linear.
 > O `pmset` avisa “Disk sleep should be non-zero whenever system sleep is non-zero”. É só um aviso;
 > com `disksleep 0` o disco fica acordado enquanto o sistema está acordado.
 
+> **Sleep do sistema desativado**: `sudo pmset -a sleep 0` + `standby 0` (o S3/S4 trava na
+> entrada com `Failure 0x1F`; ver `TROUBLESHOOTING.md`). O **display sleep** funciona; use
+> desligar/reiniciar em vez de dormir.
+
 ## 5. `mediaanalysisd` / `photoanalysisd`
 
 O `mediaanalysisd` crashava em ciclo (`EXC_BAD_ACCESS` em `0x8`, a cada ~5 min), gerava relatório e
