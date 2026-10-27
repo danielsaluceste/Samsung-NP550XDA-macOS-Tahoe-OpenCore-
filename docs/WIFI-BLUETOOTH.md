@@ -27,8 +27,15 @@ com esse build. A alternativa nativa de verdade é **Ethernet** (RTL8111).
 
 ## itlwm + HeliPort
 
-O `itlwm` é um driver completo que expõe uma interface Ethernet (`en0`). Ele **não** é AirPort, por
-isso o macOS mostra `en0` como “Ethernet” e não há painel de Wi-Fi.
+O `itlwm` é um driver completo que expõe uma interface Ethernet. Ele **não** é AirPort, por isso o
+macOS mostra a interface como “Ethernet” e não há painel de Wi-Fi. O número (`en0`/`en1`) **muda
+conforme a ordem de boot** (o RTL8111 também é “Ethernet”); descubra o correto pelo serviço:
+
+```bash
+networksetup -listnetworkserviceorder
+# (1) Ethernet  -> (Hardware Port: Ethernet, Device: en0)   <- RTL8111
+# (2) Wi-Fi     -> (Hardware Port: Ethernet, Device: en1)   <- itlwm
+```
 
 - `itlwm.kext` 2.3.0 em `EFI/OC/Kexts` (Enabled)
 - HeliPort 1.5.0 em `/Applications` (só para conectar)
@@ -59,9 +66,11 @@ Solução: **não deixe o HeliPort aberto**. Use o agente one-shot
 (`tools/post-install/heliport-oneshot.plist`):
 
 - abre o HeliPort no login;
-- espera até 30 s por IPv4 em `en0`;
-- fecha o HeliPort;
-- se não conseguir IP, **não fecha** (fallback para conectar manualmente).
+- descobre o dispositivo do serviço **Wi-Fi** (`networksetup -listnetworkserviceorder`), sem assumir
+  `en0`;
+- espera até 45 s por IPv4 nesse dispositivo;
+- fecha o HeliPort **só se** conseguiu IP;
+- se não conseguir, **não fecha** (fallback para conectar manualmente).
 
 O `itlwm` mantém a conexão depois que o HeliPort fecha.
 
@@ -70,7 +79,8 @@ Se abrir o HeliPort para trocar de rede, **feche depois** (⌘Q).
 ### Verificação
 
 ```bash
-ifconfig en0 | grep -E 'inet |status'
+dev=$(networksetup -listnetworkserviceorder | awk '/^\([0-9]+\) Wi-Fi/{getline; gsub(/\)/,"",$NF); print $NF; exit}')
+ifconfig "$dev" | grep -E 'inet |status'
 # inet 192.168.x.x ...
 # status: active
 ```

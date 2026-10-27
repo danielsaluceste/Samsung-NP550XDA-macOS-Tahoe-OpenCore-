@@ -125,9 +125,10 @@ Limitação de firmware/EC. Veja `docs/BRIGHTNESS.md`.
 
 ## Wi-Fi
 
-### `en0` aparece como Ethernet, sem painel de Wi-Fi
+### A interface do `itlwm` aparece como Ethernet, sem painel de Wi-Fi
 
-Normal: `itlwm` não é AirPort. Veja `docs/WIFI-BLUETOOTH.md`.
+Normal: `itlwm` não é AirPort. O número (`en0`/`en1`) pode mudar conforme a ordem de boot; descubra
+pelo serviço com `networksetup -listnetworkserviceorder`. Veja `docs/WIFI-BLUETOOTH.md`.
 
 ### Wi-Fi lento ou sistema degradando
 
@@ -141,7 +142,10 @@ sudo log show --last 1m | grep -c '_CGXPackagesSetWindowConstraints'
 ### Não conecta sozinho no boot
 
 - Preencha `WiFiConfig` no `Info.plist` do `itlwm`, **ou**
-- use o agente one-shot do HeliPort.
+- use o agente one-shot do HeliPort. O agente descobre o dispositivo do serviço “Wi-Fi”; se você
+  editou o script antigo que checava `en0` fixo, ele pode fechar o HeliPort cedo quando o Ethernet
+  está conectado (o `en0` passa a ser o RTL8111). Use a versão atual de
+  `tools/post-install/heliport-oneshot.plist`.
 
 ## Bluetooth
 
