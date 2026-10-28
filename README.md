@@ -237,6 +237,11 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 - adapter do compilador **oficial do Graphics 0.3.2** (release, sem `usleep(250ms)` por shader e sem
   dump no log); o adapter custom antigo continua em `adapter-wex.dylib` como fallback;
 - `-wexdbg` removido;
+- **warm-up no login** (`local.apps-warm` + `local.iconwarm`): o Tahoe compila os shaders do
+  RenderBox/App Library no `MTLCompilerService` porque não há código para GPU Intel; o pré-aquece
+  evita pagar ~3 min na primeira abertura do Apps (custo: carga alta por alguns minutos no login);
+- **Synergy**: `local.synergy-priority` (`renice -10` + latência alta), App Nap desligado e
+  `NSAutoFillHeuristicControllerEnabled=false` (input lag do Tahoe);
 - HeliPort sem ficar aberto (vazamento do WindowServer);
 - `disksleep 0` e `hibernatemode 0` (SSD sem DRAM);
 - `mediaanalysisd`/`photoanalysisd` desativados;
@@ -251,6 +256,11 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 - **Teclas Fn+F2/F3 de brilho**: o DSDT/EC só notifica o EC; patches ACPI não mudaram nada.
 - **VP9/AV1 por hardware**: o Tiger Lake não decodifica; YouTube no Chrome usa CPU. Use Safari ou
   force H.264.
+- **App Library (app Apps)**: o RenderBox do Tahoe não tem shaders pré-compilados para GPU Intel;
+  a primeira abertura após o boot paga ~3 min de CPU e as seguintes ~10 s (o cache não vai para o
+  disco). O `local.apps-warm` pré-aquece no login para reduzir isso.
+- **Input lag do Tahoe**: corrigido com `NSAutoFillHeuristicControllerEnabled=false`; o Synergy
+  ainda pode ficar lento enquanto o WindowServer está ocupado compilando shaders.
 - **Sleep do sistema**: trava na entrada (`Failure 0x1F`, EFI/Bootrom). Testados e descartados: `hibernatemode 0`, `hibernatemode 25`, remoção do `SSDT-S3`, Bluetooth desligado, patches USB (`SSDT-RHUB`, `SSDT-USBW`, `USBWakeFixup`) e o par `SSDT-GPRW`/`GPRW→XPRW`. Todos travam na entrada. Restam WEX/GPU (sleep/wake **não verificado** no TGL; `AppleIntelFramebuffer` slow no log) e `itlwm`. Use `sleep 0` (padrão do repo) e desligue/reinicie; o **display sleep** funciona.
 - **VoodooI2C 2.9.1**: não carrega no Tahoe (`VoodooGPIO`/`VoodooI2C` novos falham na injeção e o
   trackpad some). O repo fixa a **2.8**, que funciona.
@@ -265,6 +275,8 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 |---|---|
 | Tela preta / WindowServer reiniciando | stack `xe.bundle`, symlinks `libigc-tgl.dylib`/`runtime.igc64.bc`, adapter |
 | Trackpad sumiu após atualizar kext | `VoodooI2C` 2.9.1 não carrega no Tahoe; volte para **2.8** |
+| Apps demora a mostrar ícones | RenderBox sem shader Intel; use o `local.apps-warm` (login) |
+| Mouse lento com Synergy | veja prioridade/App Nap/autofill em `docs/TROUBLESHOOTING.md` |
 | Boot para em `SMCRTC: Stop` | você injetou `IOSkywalkFamily`; remova |
 | Sem áudio | ordem Lilu→AppleALC→SimpleHDA e `layout-id` 38 |
 | Sem brilho | `bklt` via BrightnessMenu; `DisplayServicesCanChangeBrightness` é 0 |

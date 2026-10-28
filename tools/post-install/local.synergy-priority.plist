@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>local.synergy-priority</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>for p in $(/usr/bin/pgrep -x synergy-service) $(/usr/bin/pgrep -x Synergy); do /usr/bin/renice -n -10 -p "$p" &gt;/dev/null 2&gt;&amp;1; /usr/bin/taskpolicy -B -l 1 -p "$p" &gt;/dev/null 2&gt;&amp;1; done</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StartInterval</key>
+    <integer>10</integer>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <key>StandardErrorPath</key>
+    <string>/tmp/synergy-priority.log</string>
+</dict>
+</plist>

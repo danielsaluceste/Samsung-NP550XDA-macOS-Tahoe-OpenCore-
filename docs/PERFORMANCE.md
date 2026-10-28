@@ -125,6 +125,38 @@ killall Dock
 Ele reconstrói as categorias (`ATXAppDirectoryOrderingProvider: Read from disk succeeded, got 6
 categories`).
 
+## 7. Tahoe: App Library, RenderBox e input lag (2026-10-28)
+
+Medições novas, depois da atualização para WEX 0.6.1/Graphics 0.3.2:
+
+- O app **Apps** (App Library) não é renderizado pelo app em si: ele aciona o **Spotlight**, que
+  usa o **RenderBox** do Tahoe. O `archive.metallib` do RenderBox só tem slices de GPU Apple
+  (`applegpu_g13g/g14g/g15g…`), então na Iris Xe (TGL) os shaders são **compilados de código-fonte**
+  pelo `MTLCompilerService`.
+- Primeira abertura depois do boot: **~3 min de CPU** no `MTLCompilerService` (dois processos,
+  ~2 min + ~1 min) + categorização do `duetexpertd` (~26 s de CPU, picos de 200%). Load average
+  chegou a **7,3** num 4C/8T.
+- Aberturas seguintes: **~10 s de CPU por abertura**. O cache **não é gravado em disco** para esse
+  caminho (`com.apple.Spotlight/com.apple.metal` ficou em 2,9 MB), então fecha/reabre = recompila.
+- O GPU restart/WindowServer watchdog observado em teste foi causado por **`killall Spotlight`**
+  com contexto de GPU ativo — não repetir.
+
+Mitigações aplicadas (todas reversíveis):
+
+- `local.apps-warm` — 45 s após o login, abre a App Library com `open -g` (sem roubar foco) e deixa
+  a compilação/categorização acontecer em segundo plano. Custo: carga alta por alguns minutos no
+  login; ganho: a primeira abertura “de verdade” deixa de pagar os ~3 min.
+- `local.iconwarm` + `/usr/local/bin/iconwarm` — desenha os ícones de `/Applications` e
+  `/System/Applications` (79 ícones; 3,1 s a frio, 97 ms quente) para aquecer IconServices/RenderBox.
+- `local.synergy-priority` — a cada 10 s, `renice -n -10` + `taskpolicy -B -l 1` em
+  `synergy-service` e `Synergy`; verificado com `ps` (`NI -10`/`-20`).
+- `defaults write -g NSAutoFillHeuristicControllerEnabled -bool false` — correção conhecida do
+  Tahoe para input lag que acumula com o uptime.
+- `defaults write com.symless.synergy NSAppSleepDisabled -bool YES` — tira o App Nap do Synergy.
+- Rede: Synergy via **Ethernet** (en0) é mais estável que Wi-Fi (`itlwm`); o roteamento atual já
+  usa en0 quando o cabo está conectado.
+- Não usar `killall Spotlight`/`killall WindowServer` para “limpar” o lag: pode reiniciar a GPU.
+
 ## O que NÃO é gargalo (medido)
 
 | Item | Medição |

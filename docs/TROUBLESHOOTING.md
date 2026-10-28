@@ -90,6 +90,45 @@ hidutil list | grep -i -E 'I2C|Touchpad'
 Para voltar: substitua `EFI/OC/Kexts/VoodooI2C.kext` e `VoodooI2CHID.kext` pela 2.8 (backup
 `RECOVERY/EFI-backup-0.5.0.tgz`/`EFI-OLD-0.5.0` do pendrive) e reinicie.
 
+## Apps / ícones
+
+### O app Apps demora para mostrar as prévias/ícones
+
+O app Apps abre a App Library no **Spotlight**, que renderiza pelo **RenderBox** do Tahoe. Como o
+`archive.metallib` da Apple não tem código para GPU Intel, os shaders são compilados na hora
+(`MTLCompilerService`) e o cache **não** vai para o disco. Medido: ~3 min de CPU na primeira vez
+após o boot e ~10 s por abertura depois.
+
+O repo instala `local.apps-warm` (pré-aquece no login, sem roubar foco) e `local.iconwarm` (aquece
+os ícones das pastas de aplicativos). Para desligar o warm-up:
+
+```bash
+launchctl bootout gui/$(id -u)/local.apps-warm
+launchctl bootout gui/$(id -u)/local.iconwarm
+```
+
+Não use `killall Spotlight` para “forçar”: com contexto de GPU ativo isso pode reiniciar a GPU e
+derrubar o WindowServer.
+
+## Mouse / Synergy
+
+### Mouse lento, principalmente ao abrir apps
+
+1. `local.synergy-priority` (LaunchDaemon) mantém `synergy-service` e `Synergy` com `renice -10` e
+   latência alta. Confira:
+
+   ```bash
+   ps -Ao pid,nice,pri,comm | grep -i synergy
+   # synergy-service / synergy-core devem estar com NI -10 (ou melhor)
+   ```
+
+2. Input lag do Tahoe: `defaults write -g NSAutoFillHeuristicControllerEnabled -bool false`
+   (relogue para valer em todos os apps).
+3. App Nap do Synergy: `defaults write com.symless.synergy NSAppSleepDisabled -bool YES`.
+4. Use **Ethernet** para o Synergy quando possível; Wi-Fi (`itlwm`) adiciona latência.
+5. O lag também aparece enquanto o RenderBox compila shaders (ver seção Apps). O warm-up no login
+   reduz esse período.
+
 ## Áudio
 
 ### Sem saída/entrada
