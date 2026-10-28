@@ -157,6 +157,26 @@ Mitigações aplicadas (todas reversíveis):
   usa en0 quando o cabo está conectado.
 - Não usar `killall Spotlight`/`killall WindowServer` para “limpar” o lag: pode reiniciar a GPU.
 
+## 8. Wake do display com o mouse do Synergy (2026-10-28)
+
+Sintoma: depois do display sleep, mexer o mouse do Synergy move o cursor mas a tela não acende.
+Medido: `IODisplayWrangler` fica em `CurrentPowerState = 1`; `caffeinate -u` acorda (vai para 4),
+então o painel/GPU acordam normalmente — o que falta é o evento sintético contar como atividade.
+
+Solução: `local.cursor-wake` (LaunchAgent, `/usr/local/bin/cursorwake`) lê **apenas a posição do
+cursor** a cada 0,5 s (não lê teclado nem cliques) e, quando ela muda, chama
+`IOPMAssertionDeclareUserActivity(kIOPMUserActiveLocal)` por 2 s. Não impede o display de dormir:
+sem movimento, não há atividade.
+
+Verificação:
+
+```bash
+ps -Ao pid,pcpu,comm | grep cursorwake          # 0,0% CPU
+pmset displaysleepnow
+# mexa o mouse; depois:
+ioreg -n IODisplayWrangler -r -w0 | grep CurrentPowerState   # deve ir para 4
+```
+
 ## O que NÃO é gargalo (medido)
 
 | Item | Medição |

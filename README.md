@@ -242,6 +242,8 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
   evita pagar ~3 min na primeira abertura do Apps (custo: carga alta por alguns minutos no login);
 - **Synergy**: `local.synergy-priority` (`renice -10` + latência alta), App Nap desligado e
   `NSAutoFillHeuristicControllerEnabled=false` (input lag do Tahoe);
+- **wake do display**: `local.cursor-wake` declara atividade quando o cursor muda — o movimento
+  sintético do Synergy sozinho não acorda o `IODisplayWrangler`;
 - HeliPort sem ficar aberto (vazamento do WindowServer);
 - `disksleep 0` e `hibernatemode 0` (SSD sem DRAM);
 - `mediaanalysisd`/`photoanalysisd` desativados;
@@ -276,6 +278,7 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
 | Tela preta / WindowServer reiniciando | stack `xe.bundle`, symlinks `libigc-tgl.dylib`/`runtime.igc64.bc`, adapter |
 | Trackpad sumiu após atualizar kext | `VoodooI2C` 2.9.1 não carrega no Tahoe; volte para **2.8** |
 | Apps demora a mostrar ícones | RenderBox sem shader Intel; use o `local.apps-warm` (login) |
+| Tela não acende com o mouse do Synergy | `local.cursor-wake` (declara atividade ao mover o cursor) |
 | Mouse lento com Synergy | veja prioridade/App Nap/autofill em `docs/TROUBLESHOOTING.md` |
 | Boot para em `SMCRTC: Stop` | você injetou `IOSkywalkFamily`; remova |
 | Sem áudio | ordem Lilu→AppleALC→SimpleHDA e `layout-id` 38 |

@@ -90,6 +90,26 @@ hidutil list | grep -i -E 'I2C|Touchpad'
 Para voltar: substitua `EFI/OC/Kexts/VoodooI2C.kext` e `VoodooI2CHID.kext` pela 2.8 (backup
 `RECOVERY/EFI-backup-0.5.0.tgz`/`EFI-OLD-0.5.0` do pendrive) e reinicie.
 
+## Tela / display sleep
+
+### A tela não acende ao mexer o mouse (Synergy)
+
+O movimento sintético do Synergy **não** conta como atividade para o `IODisplayWrangler`: o cursor
+mexe, mas o display fica em `CurrentPowerState = 1`. O painel acorda normalmente com
+`caffeinate -u` (vai para 4), então é só o evento que não “cutuca”.
+
+Solução instalada: `local.cursor-wake` (`/usr/local/bin/cursorwake`) lê **apenas a posição do
+cursor** a cada 0,5 s e chama `IOPMAssertionDeclareUserActivity` quando ela muda. Não lê teclado nem
+cliques e não impede o display de dormir.
+
+```bash
+launchctl list | grep cursor-wake
+ps -Ao pid,pcpu,comm | grep cursorwake
+pmset displaysleepnow        # tela apaga
+# mexa o mouse do Synergy -> deve acender
+ioreg -n IODisplayWrangler -r -w0 | grep CurrentPowerState   # 4 = acordado
+```
+
 ## Apps / ícones
 
 ### O app Apps demora para mostrar as prévias/ícones
