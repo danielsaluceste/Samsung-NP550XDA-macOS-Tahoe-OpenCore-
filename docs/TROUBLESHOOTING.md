@@ -41,8 +41,10 @@ sudo pmset -a autopoweroff 0
 sudo pmset -a hibernatemode 0
 ```
 
-O **display sleep** continua funcionando (`displaysleep 2/10`). Use desligar/reiniciar em vez de
-dormir.
+O **display sleep** fica **desligado** (`displaysleep 0`): no stack 0.6.1/Compat 0.6.1 o painel pode
+apagar e **não voltar** (o macOS reporta `power=4` e `bklt=1.0`, mas o link eDP não reativa; só
+reinicía). Se quiser reativar, use `sudo pmset -a displaysleep 10` ciente do risco — o
+`local.cursor-wake` ajuda quando o wake normal funciona, mas não ressuscita o link morto.
 
 ## Gráficos
 

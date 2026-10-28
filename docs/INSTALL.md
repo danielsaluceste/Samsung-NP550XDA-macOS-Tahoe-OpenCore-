@@ -126,6 +126,8 @@ sudo pmset -a disksleep 0
 sudo pmset -a hibernatemode 0
 sudo pmset -a powernap 0
 sudo pmset -a womp 0
+sudo pmset -a sleep 0
+sudo pmset -a displaysleep 0   # no 0.6.1 o painel pode nao voltar; veja TROUBLESHOOTING
 sudo rm -f /var/vm/sleepimage
 ```
 

@@ -381,8 +381,10 @@ Workaround adotado:
 sudo pmset -a sleep 0 standby 0 autopoweroff 0 hibernatemode 0
 ```
 
-O **display sleep** (`displaysleep 2/10`) funciona e não derruba a rede. Suspeitos restantes:
-WEX/GPU, `itlwm`, Bluetooth e patches USB/ACPI. Use desligar/reiniciar em vez de dormir.
+O **display sleep** ficou **desligado** (`displaysleep 0`) depois da atualização para
+WEX 0.6.1/Graphics 0.3.2: em 2026-10-28 o painel apagou e não voltou (macOS com `power=4`,
+`bklt=1.0`, link eDP morto); só reboot restaurou. Suspeitos: WEX/Compat 0.6.1 (panel path), GPU,
+`itlwm`, Bluetooth e patches USB/ACPI. Use desligar/reiniciar em vez de dormir.
 
 ## Wi-Fi no Tahoe 26.7.1 (25G241)
 

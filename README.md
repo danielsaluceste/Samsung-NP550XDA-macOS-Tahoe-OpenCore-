@@ -27,7 +27,7 @@ usadas para chegar nesse estado.
 | Wi-Fi | ⚠️ | `itlwm` + HeliPort (sem menu nativo/AirDrop) |
 | Bluetooth | ✅ | AX201 com BlueToolFixup 2.7.2 |
 | Ethernet | ✅ | Realtek RTL8111 (nativo) |
-| Sleep/Wake | ⚠️ | **sistema não suspende** (trava na entrada); `sleep 0` aplicado; display sleep OK |
+| Sleep/Wake | ⚠️ | **sistema não suspende** (trava na entrada); `sleep 0` e `displaysleep 0` (painel pode não voltar no 0.6.1) |
 | AirDrop / Handoff | ❌ | depende de Wi-Fi nativo (AWDL) |
 | iServices | ⚠️ | depende de SMBIOS/seriais válidos; não coberto |
 
@@ -246,6 +246,8 @@ Correções aplicadas (medidas, veja [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md
   sintético do Synergy sozinho não acorda o `IODisplayWrangler`;
 - HeliPort sem ficar aberto (vazamento do WindowServer);
 - `disksleep 0` e `hibernatemode 0` (SSD sem DRAM);
+- `displaysleep 0`: o painel pode apagar e não voltar no stack 0.6.1/Compat 0.6.1 (link eDP);
+  com `sleep 0`, o notebook fica ligado até você desligar/reiniciar;
 - `mediaanalysisd`/`photoanalysisd` desativados;
 - **não** desativar `duetexpertd`/`spotlightknowledged`: o app **Apps** (App Library do Tahoe)
   depende deles, senão a lista fica vazia.

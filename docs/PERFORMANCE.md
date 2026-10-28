@@ -177,6 +177,10 @@ pmset displaysleepnow
 ioreg -n IODisplayWrangler -r -w0 | grep CurrentPowerState   # deve ir para 4
 ```
 
+> **Aviso (2026-10-28):** no stack 0.6.1/Compat 0.6.1 o painel pode apagar e **não voltar** (o
+> `IODisplayWrangler` fica em 4 e `bklt=1.0`, mas o link eDP não reativa; só reboot resolve). Por
+> isso o repo fixa `displaysleep 0`. O `cursor-wake` só ajuda quando o wake normal funciona.
+
 ## O que NÃO é gargalo (medido)
 
 | Item | Medição |
